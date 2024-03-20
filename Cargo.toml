@@ -1,8 +1,8 @@
-[workspace]
-members = [
-    ".",
-    "xtask",
-]
+# [workspace]
+# members = [
+#     ".",
+#     "xtask",
+# ]
 
 [package]
 name = "inlyne"
@@ -68,7 +68,7 @@ human-panic = "1.2.3"
 notify-debouncer-full = { version = "0.3.1", default-features = false }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-glyphon = "0.3"
+glyphon = { version = "0.5.0", path = "../glyphon" }
 string_cache = { version = "0.8.7", default-features = false }
 raw-window-handle = "0.5.2"
 

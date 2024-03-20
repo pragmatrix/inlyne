@@ -89,7 +89,7 @@ pub trait ImageCallback {
 }
 
 // External state from the interpreter that we want to stub out for testing
-trait WindowInteractor {
+pub trait WindowInteractor {
     fn finished_single_doc(&self);
     fn request_redraw(&self);
     fn image_callback(&self) -> Box<dyn ImageCallback + Send>;
@@ -177,7 +177,7 @@ impl HtmlInterpreter {
 
     // TODO: fix in a later refactor (consolidate a lot of junk)
     #[allow(clippy::too_many_arguments)]
-    fn new_with_interactor(
+    pub fn new_with_interactor(
         element_queue: Arc<Mutex<VecDeque<Element>>>,
         theme: Theme,
         surface_format: TextureFormat,
@@ -187,6 +187,35 @@ impl HtmlInterpreter {
         window: Box<dyn WindowInteractor + Send>,
         color_scheme: Option<ResolvedTheme>,
     ) -> Self {
+        Self {
+            window,
+            element_queue,
+            current_textbox: TextBox::new(Vec::new(), hidpi_scale),
+            hidpi_scale,
+            surface_format,
+            state: State::with_span_color(native_color(theme.code_color, &surface_format)),
+            theme,
+            file_path,
+            should_queue: Arc::new(AtomicBool::new(true)),
+            stopped: false,
+            first_pass: true,
+            image_cache,
+            color_scheme,
+        }
+    }
+
+    // Waiting for wgpu 0.19 port. Setting to Texture Format Bgra8UnormSrgb form.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new_with_interactor_granularity(
+        element_queue: Arc<Mutex<VecDeque<Element>>>,
+        theme: Theme,
+        hidpi_scale: f32,
+        file_path: PathBuf,
+        image_cache: ImageCache,
+        window: Box<dyn WindowInteractor + Send>,
+        color_scheme: Option<ResolvedTheme>,
+    ) -> Self {
+        let surface_format = TextureFormat::Bgra8UnormSrgb;
         Self {
             window,
             element_queue,
@@ -234,6 +263,29 @@ impl HtmlInterpreter {
                 assert!(input.is_empty());
                 tok.end();
             }
+        }
+    }
+
+    pub fn interpret_html(self, html: &str) {
+        let span_color = self.native_color(self.theme.text_color);
+        let mut tok = Tokenizer::new(self, TokenizerOpts::default());
+
+        if tok.sink.should_queue.load(AtomicOrdering::Relaxed) {
+            tok.sink.state = State::with_span_color(span_color);
+            tok.sink.current_textbox = TextBox::new(Vec::new(), tok.sink.hidpi_scale);
+            tok.sink.stopped = false;
+
+            let mut input = BufferQueue::new();
+            input.push_back(
+                Tendril::from_str(html)
+                    .unwrap()
+                    .try_reinterpret::<fmt::UTF8>()
+                    .unwrap(),
+            );
+
+            let _ = tok.feed(&mut input);
+            assert!(input.is_empty());
+            tok.end();
         }
     }
 

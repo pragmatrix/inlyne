@@ -1,3 +1,5 @@
+#![allow(deprecated)]
+
 use std::cmp;
 use std::io;
 use std::time::Instant;

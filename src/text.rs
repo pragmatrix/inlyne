@@ -699,7 +699,7 @@ impl TextCache {
                 buffer.lines.push(buffer_line);
             }
 
-            buffer.shape_until_scroll(font_system);
+            buffer.shape_until_scroll(font_system, false);
 
             let _ = entry.insert(buffer);
         }
