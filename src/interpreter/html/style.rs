@@ -37,6 +37,7 @@ impl<'style> Iterator for Iter<'style> {
     }
 }
 
+#[allow(clippy::enum_variant_names)]
 pub enum Style {
     BackgroundColor(u32),
     Color(u32),

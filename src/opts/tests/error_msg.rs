@@ -1,3 +1,4 @@
+#![allow(deprecated)]
 use crate::keybindings::KeyCombos;
 use crate::opts::Config;
 
