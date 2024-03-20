@@ -11,7 +11,7 @@ use crate::utils::{Align, Line, Point, Rect, Selection, Size};
 use fxhash::{FxHashMap, FxHashSet};
 use glyphon::{
     Affinity, Attrs, AttrsList, BufferLine, Color, Cursor, FamilyOwned, FontSystem, LayoutGlyph,
-    Shaping, Style, SwashCache, TextArea, TextBounds, Weight,
+    Shaping, Style, TextArea, TextBounds, Weight,
 };
 use smart_debug::SmartDebug;
 use taffy::prelude::{AvailableSpace, Size as TaffySize};
@@ -719,8 +719,8 @@ impl TextCache {
 
 pub struct TextSystem {
     pub font_system: Arc<Mutex<FontSystem>>,
-    pub text_renderer: glyphon::TextRenderer,
-    pub text_atlas: glyphon::TextAtlas,
+    // pub text_renderer: glyphon::TextRenderer,
+    // pub text_atlas: glyphon::TextAtlas,
     pub text_cache: Arc<Mutex<TextCache>>,
-    pub swash_cache: SwashCache,
+    // pub swash_cache: SwashCache,
 }
