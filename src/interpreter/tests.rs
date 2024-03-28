@@ -1,5 +1,4 @@
 use std::collections::VecDeque;
-use std::path::PathBuf;
 use std::sync::{
     atomic::{AtomicU32, Ordering},
     mpsc, Arc, Mutex,
@@ -98,7 +97,7 @@ impl InterpreterOpts {
         self.color_scheme = Some(color_scheme);
     }
 
-    fn finish(self, counter: AtomicCounter) -> (HtmlInterpreter, Arc<Mutex<VecDeque<Element>>>) {
+    fn finish(self, _counter: AtomicCounter) -> (HtmlInterpreter, Arc<Mutex<VecDeque<Element>>>) {
         let Self {
             theme,
             fail_after: _,
@@ -107,17 +106,17 @@ impl InterpreterOpts {
         let element_queue = Arc::default();
         let surface_format = TextureFormat::Bgra8UnormSrgb;
         let hidpi_scale = 1.0;
-        let file_path = PathBuf::from("does_not_exist");
+        // let file_path = PathBuf::from("does_not_exist");
         let image_cache = ImageCache::default();
-        let window = Box::new(DummyWindow(counter));
+        // let window = Box::new(DummyWindow(counter));
         let interpreter = HtmlInterpreter::new_with_interactor(
             Arc::clone(&element_queue),
             theme,
             surface_format,
             hidpi_scale,
-            file_path,
+            // file_path,
             image_cache,
-            window,
+            // window,
             color_scheme,
         );
 

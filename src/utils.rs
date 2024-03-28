@@ -9,11 +9,11 @@ use comrak::adapters::SyntaxHighlighterAdapter;
 use comrak::plugins::syntect::{SyntectAdapter, SyntectAdapterBuilder};
 use comrak::{markdown_to_html_with_plugins, ComrakOptions};
 use indexmap::IndexMap;
-use reqwest::blocking::Client;
+// use reqwest::blocking::Client;
 use serde::Deserialize;
 use syntect::highlighting::{Theme as SyntectTheme, ThemeSet as SyntectThemeSet};
 use syntect::parsing::SyntaxSet;
-use winit::window::CursorIcon;
+// use winit::window::CursorIcon;
 
 pub fn format_title(file_path: &Path) -> String {
     match root_filepath_to_vcs_dir(file_path) {
@@ -55,14 +55,14 @@ fn root_filepath_to_vcs_dir(path: &Path) -> Option<PathBuf> {
     }
 }
 
-pub fn client() -> Client {
-    const USER_AGENT: &str = concat!(
-        "inlyne ",
-        env!("CARGO_PKG_VERSION"),
-        " https://github.com/trimental/inlyne"
-    );
-    Client::builder().user_agent(USER_AGENT).build().unwrap()
-}
+// pub fn client() -> Client {
+//     const USER_AGENT: &str = concat!(
+//         "inlyne ",
+//         env!("CARGO_PKG_VERSION"),
+//         " https://github.com/trimental/inlyne"
+//     );
+//     Client::builder().user_agent(USER_AGENT).build().unwrap()
+// }
 
 pub(crate) fn default<T: Default>() -> T {
     Default::default()
@@ -138,20 +138,20 @@ impl Align {
     }
 }
 
-#[derive(Default)]
-pub struct HoverInfo {
-    pub cursor_icon: CursorIcon,
-    pub jump: Option<f32>,
-}
+// #[derive(Default)]
+// pub struct HoverInfo {
+//     pub cursor_icon: CursorIcon,
+//     pub jump: Option<f32>,
+// }
 
-impl From<CursorIcon> for HoverInfo {
-    fn from(cursor_icon: CursorIcon) -> Self {
-        Self {
-            cursor_icon,
-            ..Default::default()
-        }
-    }
-}
+// impl From<CursorIcon> for HoverInfo {
+//     fn from(cursor_icon: CursorIcon) -> Self {
+//         Self {
+//             cursor_icon,
+//             ..Default::default()
+//         }
+//     }
+// }
 
 // TODO(cosmic): Remove after `comrak` supports code block info strings that have a comma
 //     (like ```rust,ignore)

@@ -3,7 +3,6 @@ mod html;
 mod tests;
 
 use std::collections::VecDeque;
-use std::path::PathBuf;
 use std::slice;
 use std::str::FromStr;
 use std::sync::atomic::{AtomicBool, Ordering as AtomicOrdering};
@@ -15,7 +14,7 @@ use crate::opts::ResolvedTheme;
 use crate::positioner::{Positioned, Row, Section, Spacer, DEFAULT_MARGIN};
 use crate::text::{Text, TextBox};
 use crate::utils::{markdown_to_html, Align};
-use crate::{Element, ImageCache, InlyneEvent};
+use crate::{Element, ImageCache};
 use html::{
     attr::{self, PrefersColorScheme},
     style::{self, FontStyle, FontWeight, Style, TextDecoration},
@@ -29,8 +28,8 @@ use html5ever::tokenizer::{
     BufferQueue, Tag, TagKind, Token, TokenSink, TokenSinkResult, Tokenizer, TokenizerOpts,
 };
 use wgpu::TextureFormat;
-use winit::event_loop::EventLoopProxy;
-use winit::window::Window;
+// use winit::event_loop::EventLoopProxy;
+// use winit::window::Window;
 
 use self::html::{picture, HeaderType, Picture};
 
@@ -95,36 +94,36 @@ pub trait WindowInteractor {
     fn image_callback(&self) -> Box<dyn ImageCallback + Send>;
 }
 
-struct EventLoopCallback(EventLoopProxy<InlyneEvent>);
+// struct EventLoopCallback(EventLoopProxy<InlyneEvent>);
 
-impl ImageCallback for EventLoopCallback {
-    fn loaded_image(&self, src: String, image_data: Arc<Mutex<Option<ImageData>>>) {
-        let event = InlyneEvent::LoadedImage(src, image_data);
-        self.0.send_event(event).unwrap();
-    }
-}
+// impl ImageCallback for EventLoopCallback {
+//     fn loaded_image(&self, src: String, image_data: Arc<Mutex<Option<ImageData>>>) {
+//         let event = InlyneEvent::LoadedImage(src, image_data);
+//         self.0.send_event(event).unwrap();
+//     }
+// }
 
-// A real interactive window that is being used with `HtmlInterpreter`
-struct LiveWindow {
-    window: Arc<Window>,
-    event_proxy: EventLoopProxy<InlyneEvent>,
-}
+// // A real interactive window that is being used with `HtmlInterpreter`
+// struct LiveWindow {
+//     window: Arc<Window>,
+//     event_proxy: EventLoopProxy<InlyneEvent>,
+// }
 
-impl WindowInteractor for LiveWindow {
-    fn request_redraw(&self) {
-        self.window.request_redraw();
-    }
+// impl WindowInteractor for LiveWindow {
+//     fn request_redraw(&self) {
+//         self.window.request_redraw();
+//     }
 
-    fn image_callback(&self) -> Box<dyn ImageCallback + Send> {
-        Box::new(EventLoopCallback(self.event_proxy.clone()))
-    }
+//     fn image_callback(&self) -> Box<dyn ImageCallback + Send> {
+//         Box::new(EventLoopCallback(self.event_proxy.clone()))
+//     }
 
-    fn finished_single_doc(&self) {
-        self.event_proxy
-            .send_event(InlyneEvent::PositionQueue)
-            .unwrap();
-    }
-}
+//     fn finished_single_doc(&self) {
+//         self.event_proxy
+//             .send_event(InlyneEvent::PositionQueue)
+//             .unwrap();
+//     }
+// }
 
 pub struct HtmlInterpreter {
     element_queue: Arc<Mutex<VecDeque<Element>>>,
@@ -133,14 +132,14 @@ pub struct HtmlInterpreter {
     theme: Theme,
     surface_format: TextureFormat,
     state: State,
-    file_path: PathBuf,
+    // file_path: PathBuf,
     // Whether the interpreters is allowed to queue elements
     pub should_queue: Arc<AtomicBool>,
     // Whether interpreter should stop queuing till next received file
     stopped: bool,
     first_pass: bool,
     image_cache: ImageCache,
-    window: Box<dyn WindowInteractor + Send>,
+    // window: Box<dyn WindowInteractor + Send>,
     color_scheme: Option<ResolvedTheme>,
 }
 
@@ -149,28 +148,28 @@ impl HtmlInterpreter {
     // rest of the repo just because of here
     #[allow(clippy::too_many_arguments)]
     pub fn new(
-        window: Arc<Window>,
+        // window: Arc<Window>,
         element_queue: Arc<Mutex<VecDeque<Element>>>,
         theme: Theme,
         surface_format: TextureFormat,
         hidpi_scale: f32,
-        file_path: PathBuf,
+        // file_path: PathBuf,
         image_cache: ImageCache,
-        event_proxy: EventLoopProxy<InlyneEvent>,
+        // event_proxy: EventLoopProxy<InlyneEvent>,
         color_scheme: Option<ResolvedTheme>,
     ) -> Self {
-        let live_window = LiveWindow {
-            window,
-            event_proxy,
-        };
+        // let live_window = LiveWindow {
+        //     window,
+        //     event_proxy,
+        // };
         Self::new_with_interactor(
             element_queue,
             theme,
             surface_format,
             hidpi_scale,
-            file_path,
+            // file_path,
             image_cache,
-            Box::new(live_window),
+            // Box::new(live_window),
             color_scheme,
         )
     }
@@ -182,20 +181,20 @@ impl HtmlInterpreter {
         theme: Theme,
         surface_format: TextureFormat,
         hidpi_scale: f32,
-        file_path: PathBuf,
+        // file_path: PathBuf,
         image_cache: ImageCache,
-        window: Box<dyn WindowInteractor + Send>,
+        // window: Box<dyn WindowInteractor + Send>,
         color_scheme: Option<ResolvedTheme>,
     ) -> Self {
         Self {
-            window,
+            // window,
             element_queue,
             current_textbox: TextBox::new(Vec::new(), hidpi_scale),
             hidpi_scale,
             surface_format,
             state: State::with_span_color(native_color(theme.code_color, &surface_format)),
             theme,
-            file_path,
+            // file_path,
             should_queue: Arc::new(AtomicBool::new(true)),
             stopped: false,
             first_pass: true,
@@ -210,21 +209,20 @@ impl HtmlInterpreter {
         element_queue: Arc<Mutex<VecDeque<Element>>>,
         theme: Theme,
         hidpi_scale: f32,
-        file_path: PathBuf,
+        // file_path: PathBuf,
         image_cache: ImageCache,
-        window: Box<dyn WindowInteractor + Send>,
         color_scheme: Option<ResolvedTheme>,
     ) -> Self {
         let surface_format = TextureFormat::Bgra8UnormSrgb;
         Self {
-            window,
+            // window,
             element_queue,
             current_textbox: TextBox::new(Vec::new(), hidpi_scale),
             hidpi_scale,
             surface_format,
             state: State::with_span_color(native_color(theme.code_color, &surface_format)),
             theme,
-            file_path,
+            // file_path,
             should_queue: Arc::new(AtomicBool::new(true)),
             stopped: false,
             first_pass: true,
@@ -359,9 +357,9 @@ impl HtmlInterpreter {
     }
     fn push_element<I: Into<Element>>(&mut self, element: I) {
         self.element_queue.lock().unwrap().push_back(element.into());
-        if self.first_pass {
-            self.window.request_redraw()
-        }
+        // if self.first_pass {
+        //     self.window.request_redraw()
+        // }
     }
 
     fn push_image_from_picture(&mut self, pic: Picture) {
@@ -373,13 +371,16 @@ impl HtmlInterpreter {
             Some(image_data) if is_url => {
                 Image::from_image_data(image_data.clone(), self.hidpi_scale)
             }
-            _ => Image::from_src(
-                src.clone(),
-                self.file_path.clone(),
-                self.hidpi_scale,
-                self.window.image_callback(),
-            )
-            .unwrap(),
+            _ => {
+                todo!("Support images");
+                // Image::from_src(
+                //     src.clone(),
+                //     self.file_path.clone(),
+                //     self.hidpi_scale,
+                //     self.window.image_callback(),
+                // )
+                // .unwrap()
+            }
         }
         .with_align(align);
 
@@ -943,7 +944,7 @@ impl TokenSink for HtmlInterpreter {
                 self.push_current_textbox();
                 self.should_queue.store(false, AtomicOrdering::Relaxed);
                 self.first_pass = false;
-                self.window.finished_single_doc();
+                // self.window.finished_single_doc();
             }
             Token::ParseError(err) => tracing::warn!("HTML parser emitted error: {err}"),
             Token::DoctypeToken(_) | Token::CommentToken(_) | Token::NullCharacterToken => {}

@@ -23,17 +23,19 @@ exclude = [
 keywords = ["markdown", "viewer", "gpu"]
 
 [features]
-default = ["wayland", "x11"]
+# default = ["wayland", "x11"]
+default = []
 x11 = ["copypasta/x11", "winit/x11"]
 wayland = ["copypasta/wayland", "winit/wayland"]
 
 [dependencies]
-winit = { version = "0.28.7", default-features = false }
-wgpu = "0.16"
+winit = { version = "0.28.7", optional = true, default-features = false }
+wgpu = "0.19.3"
 bytemuck = { version = "1.15.0", features = [ "derive" ] }
 lyon = "1.0.1"
 comrak = { version = "0.21.0", default-features = false, features = ["shortcodes", "syntect"] }
-open = "5.1.2"
+# Unsupported on wasm:
+# open = "5.1.2"
 html5ever = "0.26.0"
 image = "0.24.9"
 clap = { version = "4.4.18", features = ["cargo"] }
@@ -43,7 +45,8 @@ anyhow = "1.0.81"
 dirs = "5.0.1"
 serde = { version = "1.0.197", features = ["derive"] }
 toml = "0.8.11"
-reqwest = { version = "0.11.26", default-features = false, features = ["blocking", "json", "rustls-tls", "stream"] }
+# Blocking is not supported on wasm: <https://github.com/seanmonstar/reqwest/issues/891>
+# reqwest = { version = "0.11.26", default-features = false, features = ["blocking", "json", "rustls-tls", "stream"] }
 notify = "6.1.1"
 dark-light = "1.0.0"
 # We only decompress our own compressed data, so disable `safe-decode` and
@@ -56,21 +59,21 @@ html-escape = "0.2.13"
 fxhash = "0.2.1"
 twox-hash = "1.6.3"
 taffy = "0.3.18"
-syntect = "5.2.0"
 smart-debug = "0.0.3"
-two-face = "0.3.0"
+two-face = { version = "0.3.0", default-features = false, features = ["syntect-fancy"] }
 # NOTE: We need `fontconfig` enabled to pick up fonts on some systems, but
 # `glyphon` doesn't provide any way set that feature for `fontdb`, so we have to
 # set the feature for the transitive dep while manually making sure that we keep
 # the versions in sync ;-;
 fontdb = { version = "0.14.1", features = ["fontconfig"] }
 human-panic = "1.2.3"
-notify-debouncer-full = { version = "0.3.1", default-features = false }
+# notify-debouncer-full = { version = "0.3.1", default-features = false }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 glyphon = { version = "0.5.0", path = "../glyphon" }
 string_cache = { version = "0.8.7", default-features = false }
 raw-window-handle = "0.5.2"
+syntect = { version = "5.0", default-features = false, features = ["default-fancy"] }
 
 [profile.release]
 strip = true

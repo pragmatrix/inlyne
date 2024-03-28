@@ -8,14 +8,14 @@ use positioner::{Row, Section, Spacer};
 use table::Table;
 use text::TextBox;
 
-mod clipboard;
+// mod clipboard;
 pub mod color;
 mod debug_impls;
-pub mod fonts;
+// pub mod fonts;
 pub mod history;
 pub mod image;
 pub mod interpreter;
-mod keybindings;
+// mod keybindings;
 pub mod opts;
 pub mod positioner;
 // pub mod renderer;

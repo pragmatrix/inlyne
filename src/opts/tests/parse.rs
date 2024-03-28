@@ -25,7 +25,6 @@ impl Opts {
             page_width: None,
             font_opts: FontOptions::default(),
             lines_to_scroll: LinesToScroll::default().0,
-            keybindings: Default::default(),
             color_scheme: None,
         }
     }

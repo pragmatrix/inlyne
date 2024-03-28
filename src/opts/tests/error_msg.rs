@@ -1,5 +1,5 @@
 #![allow(deprecated)]
-use crate::keybindings::KeyCombos;
+// use crate::keybindings::KeyCombos;
 use crate::opts::Config;
 
 macro_rules! snapshot_config_parse_error {
