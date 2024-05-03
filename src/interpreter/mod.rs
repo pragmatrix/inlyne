@@ -863,6 +863,7 @@ impl HtmlInterpreter {
                 }
             }
         } else {
+            #[allow(clippy::assigning_clones)]
             if self.current_textbox.texts.is_empty() && self.state.text_options.pre_formatted == 0 {
                 str = str.trim_start().to_owned();
             }
