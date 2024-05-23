@@ -30,7 +30,7 @@ default = []
 
 [dependencies]
 # winit = { version = "0.29.15", optional = true, default-features = false }
-wgpu = "0.19.3"
+wgpu = "0.20.0"
 bytemuck = { version = "1.15.0", features = [ "derive" ] }
 lyon = "1.0.1"
 comrak = { version = "0.21.0", default-features = false, features = ["shortcodes", "syntect"] }
