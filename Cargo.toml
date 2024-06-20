@@ -94,7 +94,8 @@ filetime = "0.2.23"
 insta = "1.36.1"
 pretty_assertions = "1.4.0"
 tempfile = "3.10.1"
-wiremock = "0.6.0"
+# This pulls in hyper with tokio default features, which in turn breaks wasm32
+# wiremock = "0.6.0"
 
 # Selectively bump up opt level for some dependencies to improve dev build perf
 [profile.dev.package]
