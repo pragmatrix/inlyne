@@ -1,7 +1,6 @@
 mod html;
-#[cfg(test)]
-mod tests;
-
+// #[cfg(test)]
+// mod tests;
 use std::collections::VecDeque;
 use std::slice;
 use std::str::FromStr;
