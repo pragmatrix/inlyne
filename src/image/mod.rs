@@ -449,13 +449,13 @@ impl ImageRenderer {
             layout: Some(&pipeline_layout),
             vertex: wgpu::VertexState {
                 module: &shader,
-                entry_point: "vs_main",
+                entry_point: Some("vs_main"),
                 buffers: &vertex_buffers,
                 compilation_options: wgpu::PipelineCompilationOptions::default(),
             },
             fragment: Some(wgpu::FragmentState {
                 module: &shader,
-                entry_point: "fs_main",
+                entry_point: Some("fs_main"),
                 targets: &[Some(wgpu::ColorTargetState {
                     format: *format,
                     blend: Some(wgpu::BlendState {
@@ -474,6 +474,7 @@ impl ImageRenderer {
             depth_stencil: None,
             multisample: wgpu::MultisampleState::default(),
             multiview: None,
+            cache: None,
         });
         const INDICES: &[u16] = &[0, 1, 2, 2, 3, 0];
         let index_buf = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
