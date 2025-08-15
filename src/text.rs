@@ -9,6 +9,7 @@ use crate::debug_impls::{self, DebugInline, DebugInlineMaybeF32Color};
 use crate::utils::{Align, Line, Point, Rect, Selection, Size};
 
 use fxhash::{FxHashMap, FxHashSet};
+use glyphon::cosmic_text::LineEnding;
 use glyphon::{
     Affinity, Attrs, AttrsList, BufferLine, Color, Cursor, FamilyOwned, FontSystem, LayoutGlyph,
     Shaping, Style, TextArea, TextBounds, Weight,
@@ -110,6 +111,7 @@ impl CachedTextArea {
             bounds: self.bounds,
             default_color: self.default_color,
             scale: 1.,
+            custom_glyphs: &[],
         }
     }
 }
@@ -674,20 +676,24 @@ impl TextCache {
             let metrics = glyphon::Metrics::new(key.size, key.line_height);
             let mut buffer = glyphon::Buffer::new(font_system, metrics);
 
-            buffer.set_size(font_system, key.bounds.0, key.bounds.1.max(key.line_height));
+            buffer.set_size(
+                font_system,
+                Some(key.bounds.0),
+                Some(key.bounds.1.max(key.line_height)),
+            );
 
             buffer.lines.clear();
 
             for line in key.lines {
                 let mut line_str = String::new();
-                let mut attrs_list = AttrsList::new(Attrs::new());
+                let mut attrs_list = AttrsList::new(&Attrs::new());
                 for section in line {
                     let start = line_str.len();
                     line_str.push_str(section.content);
                     let end = line_str.len();
                     attrs_list.add_span(
                         start..end,
-                        Attrs::new()
+                        &Attrs::new()
                             .family(section.font.family)
                             .weight(section.font.weight)
                             .style(section.font.style)
@@ -695,7 +701,12 @@ impl TextCache {
                             .metadata(section.index),
                     )
                 }
-                let buffer_line = BufferLine::new(line_str, attrs_list, Shaping::Advanced);
+                let buffer_line = BufferLine::new(
+                    line_str,
+                    LineEnding::default(),
+                    attrs_list,
+                    Shaping::Advanced,
+                );
                 buffer.lines.push(buffer_line);
             }
 
