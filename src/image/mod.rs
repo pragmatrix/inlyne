@@ -431,7 +431,7 @@ impl ImageRenderer {
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
             bind_group_layouts: &[&texture_bind_group_layout],
-            push_constant_ranges: &[],
+            immediate_size: 0,
         });
 
         let vertex_buffers = [wgpu::VertexBufferLayout {
@@ -473,7 +473,7 @@ impl ImageRenderer {
             primitive: wgpu::PrimitiveState::default(),
             depth_stencil: None,
             multisample: wgpu::MultisampleState::default(),
-            multiview: None,
+            multiview_mask: None,
             cache: None,
         });
         const INDICES: &[u16] = &[0, 1, 2, 2, 3, 0];
@@ -488,7 +488,7 @@ impl ImageRenderer {
             address_mode_w: wgpu::AddressMode::ClampToEdge,
             mag_filter: wgpu::FilterMode::Linear,
             min_filter: wgpu::FilterMode::Linear,
-            mipmap_filter: wgpu::FilterMode::Linear,
+            mipmap_filter: wgpu::MipmapFilterMode::Linear,
             ..Default::default()
         });
         Self {
