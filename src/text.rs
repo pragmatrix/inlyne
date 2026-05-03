@@ -8,17 +8,44 @@ use std::sync::{Arc, Mutex};
 use crate::debug_impls::{self, DebugInline, DebugInlineMaybeF32Color};
 use crate::utils::{Align, Line, Point, Rect, Selection, Size};
 
-use fxhash::{FxHashMap, FxHashSet};
-use glyphon::cosmic_text::LineEnding;
-use glyphon::{
-    Affinity, Attrs, AttrsList, BufferLine, Color, Cursor, FamilyOwned, FontSystem, LayoutGlyph,
-    Shaping, Style, TextArea, TextBounds, Weight,
+use cosmic_text::LineEnding;
+use cosmic_text::{
+    Affinity, Attrs, AttrsList, BufferLine, Color, Cursor, FamilyOwned, FontSystem,
+    LayoutGlyph, Shaping, Style, Weight,
 };
+use fxhash::{FxHashMap, FxHashSet};
 use smart_debug::SmartDebug;
 use taffy::prelude::{AvailableSpace, Size as TaffySize};
 
 type KeyHash = u64;
 type HashBuilder = twox_hash::RandomXxHashBuilder64;
+
+#[derive(Clone, Copy)]
+pub struct TextBounds {
+    pub left: i32,
+    pub top: i32,
+    pub right: i32,
+    pub bottom: i32,
+}
+
+impl Default for TextBounds {
+    fn default() -> Self {
+        Self {
+            left: 0,
+            top: 0,
+            right: i32::MAX,
+            bottom: i32::MAX,
+        }
+    }
+}
+
+pub struct TextArea<'a> {
+    pub buffer: &'a cosmic_text::Buffer,
+    pub left: f32,
+    pub top: f32,
+    pub bounds: TextBounds,
+    pub default_color: Color,
+}
 
 pub struct TextBoxMeasure {
     pub textbox: Arc<TextBox>,
@@ -110,8 +137,6 @@ impl CachedTextArea {
             top: self.top,
             bounds: self.bounds,
             default_color: self.default_color,
-            scale: 1.,
-            custom_glyphs: &[],
         }
     }
 }
@@ -618,9 +643,9 @@ impl Text {
 
 #[derive(Debug, Clone, Copy, Hash)]
 struct Font<'a> {
-    family: glyphon::Family<'a>,
-    weight: glyphon::Weight,
-    style: glyphon::Style,
+    family: cosmic_text::Family<'a>,
+    weight: cosmic_text::Weight,
+    style: cosmic_text::Style,
 }
 
 #[derive(Clone, Copy, Hash)]
@@ -641,7 +666,7 @@ pub struct Key<'a> {
 
 #[derive(Default)]
 pub struct TextCache {
-    entries: FxHashMap<KeyHash, glyphon::Buffer>,
+    entries: FxHashMap<KeyHash, cosmic_text::Buffer>,
     recently_used: FxHashSet<KeyHash>,
     hasher: HashBuilder,
 }
@@ -651,15 +676,15 @@ impl TextCache {
         Self::default()
     }
 
-    pub fn get(&self, key: &KeyHash) -> Option<&glyphon::Buffer> {
+    pub fn get(&self, key: &KeyHash) -> Option<&cosmic_text::Buffer> {
         self.entries.get(key)
     }
 
     fn allocate(
         &mut self,
-        font_system: &mut glyphon::FontSystem,
+        font_system: &mut cosmic_text::FontSystem,
         key: Key<'_>,
-    ) -> (KeyHash, &mut glyphon::Buffer) {
+    ) -> (KeyHash, &mut cosmic_text::Buffer) {
         let hash = {
             let mut hasher = self.hasher.build_hasher();
 
@@ -673,8 +698,8 @@ impl TextCache {
         };
 
         if let hash_map::Entry::Vacant(entry) = self.entries.entry(hash) {
-            let metrics = glyphon::Metrics::new(key.size, key.line_height);
-            let mut buffer = glyphon::Buffer::new(font_system, metrics);
+            let metrics = cosmic_text::Metrics::new(key.size, key.line_height);
+            let mut buffer = cosmic_text::Buffer::new(font_system, metrics);
 
             buffer.set_size(
                 Some(key.bounds.0),

@@ -7,7 +7,7 @@ use std::fmt;
 use crate::positioner::Spacer;
 use crate::text::Text;
 
-use glyphon::FamilyOwned;
+use cosmic_text::FamilyOwned;
 
 pub struct DebugInlineMaybeF32Color<'a>(pub &'a Option<[f32; 4]>);
 

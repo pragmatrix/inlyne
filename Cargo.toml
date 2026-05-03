@@ -61,16 +61,14 @@ twox-hash = "1.6.3"
 taffy = "0.3.18"
 smart-debug = "0.0.3"
 two-face = { version = "0.3.0", default-features = false, features = ["syntect-fancy"] }
-# NOTE: We need `fontconfig` enabled to pick up fonts on some systems, but
-# `glyphon` doesn't provide any way set that feature for `fontdb`, so we have to
-# set the feature for the transitive dep while manually making sure that we keep
-# the versions in sync ;-;
+# NOTE: We need `fontconfig` enabled to pick up fonts on some systems.
+# Keep `fontdb` version/features aligned with `cosmic-text` expectations.
 fontdb = { version = "0.14.1", features = ["fontconfig"] }
+cosmic-text = "0.19.0"
 human-panic = "1.2.3"
 # notify-debouncer-full = { version = "0.3.1", default-features = false }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-glyphon = { version = "0.11.0", path = "../glyphon" }
 string_cache = { version = "0.8.7", default-features = false }
 # raw-window-handle = "0.6.0"
 syntect = { version = "5.0", default-features = false, features = ["default-fancy"] }

@@ -21,7 +21,7 @@ use html::{
 };
 
 use comrak::Anchorizer;
-use glyphon::FamilyOwned;
+use cosmic_text::FamilyOwned;
 use html5ever::tendril::*;
 use html5ever::tokenizer::{
     BufferQueue, Tag, TagKind, Token, TokenSink, TokenSinkResult, Tokenizer, TokenizerOpts,
