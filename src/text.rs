@@ -383,7 +383,7 @@ impl TextBox {
             for ThinLine { range, color } in &underlines {
                 let start_cursor = Cursor::new(line.line_i, range.start);
                 let end_cursor = Cursor::new(line.line_i, range.end);
-                if let Some((highlight_x, highlight_w)) = line.highlight(start_cursor, end_cursor) {
+                for (highlight_x, highlight_w) in line.highlight(start_cursor, end_cursor) {
                     let x = text_area.left + highlight_x;
                     let min = (x.floor(), y);
                     let max = ((x + highlight_w).ceil(), y);
@@ -394,7 +394,7 @@ impl TextBox {
             for ThinLine { range, color } in &strikes {
                 let start_cursor = Cursor::new(line.line_i, range.start);
                 let end_cursor = Cursor::new(line.line_i, range.end);
-                if let Some((highlight_x, highlight_w)) = line.highlight(start_cursor, end_cursor) {
+                for (highlight_x, highlight_w) in line.highlight(start_cursor, end_cursor) {
                     let x = screen_position.0 + highlight_x;
                     let y = y - (line_height / 2.);
                     let min = (x.floor(), y);
@@ -452,7 +452,7 @@ impl TextBox {
                         || line_contains(select_end.1)
                         || (select_start.1 < y && select_end.1 > y + line_height)
                     {
-                        if let Some((highlight_x, highlight_w)) =
+                        for (highlight_x, highlight_w) in
                             line.highlight(start_cursor, end_cursor)
                         {
                             let x = screen_position.0 + highlight_x;
@@ -677,7 +677,6 @@ impl TextCache {
             let mut buffer = glyphon::Buffer::new(font_system, metrics);
 
             buffer.set_size(
-                font_system,
                 Some(key.bounds.0),
                 Some(key.bounds.1.max(key.line_height)),
             );
