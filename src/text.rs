@@ -10,8 +10,8 @@ use crate::utils::{Align, Line, Point, Rect, Selection, Size};
 
 use cosmic_text::LineEnding;
 use cosmic_text::{
-    Affinity, Attrs, AttrsList, BufferLine, Color, Cursor, FamilyOwned, FontSystem,
-    LayoutGlyph, Shaping, Style, Weight,
+    Affinity, Attrs, AttrsList, BufferLine, Color, Cursor, FamilyOwned, FontSystem, LayoutGlyph,
+    Shaping, Style, Weight,
 };
 use fxhash::{FxHashMap, FxHashSet};
 use smart_debug::SmartDebug;
@@ -477,9 +477,7 @@ impl TextBox {
                         || line_contains(select_end.1)
                         || (select_start.1 < y && select_end.1 > y + line_height)
                     {
-                        for (highlight_x, highlight_w) in
-                            line.highlight(start_cursor, end_cursor)
-                        {
+                        for (highlight_x, highlight_w) in line.highlight(start_cursor, end_cursor) {
                             let x = screen_position.0 + highlight_x;
                             rects.push(Rect::from_min_max(
                                 (x.floor(), y),
@@ -701,10 +699,7 @@ impl TextCache {
             let metrics = cosmic_text::Metrics::new(key.size, key.line_height);
             let mut buffer = cosmic_text::Buffer::new(font_system, metrics);
 
-            buffer.set_size(
-                Some(key.bounds.0),
-                Some(key.bounds.1.max(key.line_height)),
-            );
+            buffer.set_size(Some(key.bounds.0), Some(key.bounds.1.max(key.line_height)));
 
             buffer.lines.clear();
 
